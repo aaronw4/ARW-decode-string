@@ -6,6 +6,7 @@ var decodeString = function(s) {
     let stringArray = s.split('')
     let decodedArray = []
     let count = 0
+    let bracketCount = 1
     
     while (count < stringArray.length) {
         let char = stringArray[count]
@@ -16,35 +17,49 @@ var decodeString = function(s) {
         }
         else if ('0' <= char && char <= '9') {
             let number = Number(char)
-            repeat(number)
+            let repeatLetters = repeat(number)
+            decodedArray.push(repeatLetters)
         }
     }
 
     let solution = decodedArray.join('')
-    return solution
+    return solution    
 
     function repeat(multiple, segment = []) {
         count += 2
-        segment = []
+        subSegment = []
 
         while (stringArray[count] != ']') {
             let repeatChar = stringArray[count]
 
             if ('0' <= repeatChar && repeatChar <= '9') {
-                repeat(repeatChar, segment)
+                bracketCount += 1
+                segment.push(subSegment)
+                let number = Number(repeatChar)
+                subSegment = repeat(number, segment)
             } else {
-                segment.push(repeatChar)
+                subSegment.push(repeatChar)
                 count += 1
             }            
         }
 
+        bracketCount -= 1
+
+        let combinedSubsegment = subSegment.join('')
+        let repeatSegment = new Array(multiple).fill(combinedSubsegment)
+        let newSegment = repeatSegment.join('')        
+        segment.push(newSegment)
         let combinedSegment = segment.join('')
-        let repeatSegment = new Array(multiple).fill(combinedSegment)
-        let newSegment = repeatSegment.join('')
-        decodedArray.push(newSegment)
+        
         count += 1
+        
+        if (bracketCount === 0) {
+            return [newSegment]
+        } else {
+            return [combinedSegment]
+        }        
     }
 };
 
-// console.log(decodeString('abc3[d]ef'))
+console.log(decodeString('2[abc]3[cd]ef'))
 console.log(decodeString('3[a2[c]]'))
