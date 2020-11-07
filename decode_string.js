@@ -3,60 +3,55 @@
  * @return {string}
  */
 var decodeString = function(s) {
-    let stringArray = s.split('')
-    let decodedArray = []
+    let decodedString = ''
     let count = 0
     let bracketCount = 1
     
-    while (count < stringArray.length) {
-        let char = stringArray[count]
+    while (count < s.length) {
+        let char = s[count]
 
         if (char.toUpperCase() != char.toLowerCase()) {
-            decodedArray.push(char)
-            count += 1
+            decodedString += char
+            count++
         }
         else if ('0' <= char && char <= '9') {
             let number = Number(char)
             let repeatLetters = repeat(number)
-            decodedArray.push(repeatLetters)
+            decodedString += repeatLetters
         }
     }
 
-    let solution = decodedArray.join('')
-    return solution    
+    return decodedString    
 
-    function repeat(multiple, segment = []) {
+    function repeat(multiple, segment = '') {
         count += 2
-        subSegment = []
+        subSegment = ''
 
-        while (stringArray[count] != ']') {
-            let repeatChar = stringArray[count]
+        while (s[count] != ']') {
+            let repeatChar = s[count]
 
             if ('0' <= repeatChar && repeatChar <= '9') {
-                bracketCount += 1
-                segment.push(subSegment)
+                bracketCount++
+                segment += subSegment
                 let number = Number(repeatChar)
                 subSegment = repeat(number, segment)
             } else {
-                subSegment.push(repeatChar)
-                count += 1
+                subSegment += repeatChar
+                count++
             }            
         }
 
-        bracketCount -= 1
+        bracketCount--
 
-        let combinedSubsegment = subSegment.join('')
-        let repeatSegment = new Array(multiple).fill(combinedSubsegment)
-        let newSegment = repeatSegment.join('')        
-        segment.push(newSegment)
-        let combinedSegment = segment.join('')
+        let repeatSegment = subSegment.repeat(multiple)
+        segment += repeatSegment
         
-        count += 1
+        count++
         
         if (bracketCount === 0) {
-            return [newSegment]
+            return repeatSegment
         } else {
-            return [combinedSegment]
+            return segment
         }        
     }
 };
